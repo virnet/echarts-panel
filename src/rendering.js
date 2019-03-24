@@ -106,39 +106,7 @@ export default function link(scope, elem, attrs, ctrl) {
     }
 
     function pieChartsOptions(echartPanel) {
-        let labelOptions = {
-            normal: {
-                show: false,
-                formatter: '{a|{a}}{abg|}\n{hr|}\n  {b|{b}：}{c}  {per|{d}%}  ',
-                backgroundColor: '#eee',
-                borderColor: '#aaa',
-                borderWidth: 1,
-                borderRadius: 4,
-                rich: {
-                    a: {
-                        color: '#999',
-                        lineHeight: 22,
-                        align: 'center'
-                    },
-                    hr: {
-                        borderColor: '#aaa',
-                        width: '100%',
-                        borderWidth: 0.5,
-                        height: 0
-                    },
-                    b: {
-                        fontSize: 16,
-                        lineHeight: 33
-                    },
-                    per: {
-                        color: '#eee',
-                        backgroundColor: '#334455',
-                        padding: [2, 4],
-                        borderRadius: 2
-                    }
-                }
-            }
-        };
+        let labelOptions;
         let option = {
             tooltip: {
                 trigger: 'item',
@@ -175,27 +143,57 @@ export default function link(scope, elem, attrs, ctrl) {
                 maxRadius * (data.series.length - i - 1) / data.series.length + '%',
                 maxRadius * (data.series.length - i) / data.series.length * 0.9 + '%'
             ];
-            let _labelOptions;
             let itemData = item.data.map(i => {
                 legendData.add(i.name);
                 return {name: i.name, value: i.value[1]}
             });
-
-            if (i === 0) {
-                _labelOptions = JSON.parse(JSON.stringify(labelOptions));
-                _labelOptions.normal.show = ctrl.panel.label.show;
-            } else {
-                _labelOptions = {
+            if (i !== 0) {
+                labelOptions={
                     normal: {
+                        show: ctrl.panel.label.show,
                         position: 'inner'
                     }
                 }
+            }else{
+                labelOptions = {
+                    normal: {
+                        show: ctrl.panel.label.show,
+                        formatter: '{a|{a}}{abg|}\n{hr|}\n  {b|{b}：}{c}  {per|{d}%}  ',
+                        backgroundColor: '#eee',
+                        borderColor: '#aaa',
+                        borderWidth: 1,
+                        borderRadius: 4,
+                        rich: {
+                            a: {
+                                color: '#999',
+                                lineHeight: 22,
+                                align: 'center'
+                            },
+                            hr: {
+                                borderColor: '#aaa',
+                                width: '100%',
+                                borderWidth: 0.5,
+                                height: 0
+                            },
+                            b: {
+                                fontSize: 16,
+                                lineHeight: 33
+                            },
+                            per: {
+                                color: '#eee',
+                                backgroundColor: '#334455',
+                                padding: [2, 4],
+                                borderRadius: 2
+                            }
+                        }
+                    }
+                };
             }
             option.series.push({
                 name: item.name,
                 type: 'pie',
                 radius: radius,
-                label: _labelOptions,
+                label: labelOptions,
                 data: itemData
             })
         });
