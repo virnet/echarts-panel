@@ -1,0 +1,49 @@
+<div class="editor-row">
+  <div class="section gf-form-group">
+    <h5 class="section-heading">常规</h5>
+    <div class="gf-form">
+      <span class="gf-form-label width-8">类型</span>
+      <div class="gf-form-select-wrapper max-width-12">
+        <select class="gf-form-input" ng-model="ctrl.panel.chartsType" ng-options="t for t in ['bar','pie', 'line','map']" ng-change="ctrl.changeChartsType()"></select>
+      </div>
+    </div>
+    <div class="gf-form">
+      <span class="gf-form-label width-8">单位</span>
+      <div class="gf-form-dropdown-typeahead width-12" ng-model="ctrl.panel.format" dropdown-typeahead="ctrl.unitFormats" dropdown-typeahead-on-select="ctrl.setUnitFormat($subItem)">
+      </div>
+    </div>
+    <div class="gf-form">
+      <span class="gf-form-label width-8">值</span>
+      <div class="gf-form-select-wrapper max-width-12">
+        <select class="gf-form-input" ng-model="ctrl.panel.valueName" ng-options="v for v in ['min','max','avg', 'current', 'total']"
+          ng-change="ctrl.render()"></select>
+      </div>
+    </div>
+    <div class="gf-form">
+      <span class="gf-form-label width-8">按时间聚合</span>
+        <input type="text" class="gf-form-input width-12" ng-model="ctrl.panel.dateFormat" ng-change="ctrl.render()" ng-model-onblur
+               placeholder="YYYY-MM-DD HH:mm:ss">
+
+      </div>
+  </div>
+
+  <div class="section gf-form-group">
+    <h5 class="section-heading">图表属性</h5>
+    <gf-form-switch class="gf-form" ng-show="ctrl.panel.show.stack" label="堆叠" label-class="width-11" checked="ctrl.panel.stack" on-change="ctrl.refresh()"></gf-form-switch>
+    <gf-form-switch class="gf-form" ng-show="ctrl.panel.show.legend" label="图例" label-class="width-11" checked="ctrl.panel.legend.show" on-change="ctrl.refresh()"></gf-form-switch>
+    <div class="gf-form" ng-show="ctrl.panel.show.legend&&ctrl.panel.legend.show">
+      <span class="gf-form-label width-8">图例位置</span>
+      <div class="gf-form-select-wrapper max-width-8">
+        <select class="gf-form-input" ng-model="ctrl.panel.legend.position" ng-options="f.value as f.text for f in [{text: '顶部', value: 'top'}, {text: '底部', value: 'bottom'}, {text: '靠右', value: 'right'}]"
+                ng-change="ctrl.render()"></select>
+      </div>
+    </div>
+    <gf-form-switch class="gf-form" ng-show="ctrl.panel.show.label" label="显示标签/数据" label-class="width-11" checked="ctrl.panel.label.show" on-change="ctrl.refresh()"></gf-form-switch>
+    <div class="gf-form" ng-show="ctrl.panel.label.show&&ctrl.panel.show.label">
+      <span class="gf-form-label width-10">标签/数据文字大小</span>
+      <input type="text" class="gf-form-input width-6" ng-model="ctrl.panel.label.fontSize" ng-change="ctrl.render()" ng-model-onblur
+             placeholder="12">
+    </div>
+    <gf-form-switch class="gf-form" ng-show="ctrl.panel.show.tooltip" label="提示工具" label-class="width-11" checked="ctrl.panel.tooltip.show" on-change="ctrl.refresh()"></gf-form-switch>
+  </div>
+</div>

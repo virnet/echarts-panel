@@ -1,0 +1,35 @@
+{
+  "type": "panel",
+  "name": "Echarts Panel",
+  "id": "virnet-echarts-panel",
+
+  "info": {
+    "description": "echarts panel for grafana",
+    "author": {
+      "name": "virnet",
+      "url": "https://github.com/virnet/echarts-panel"
+    },
+    "keywords": ["echarts", "panel"],
+    "logos": {
+      "small": "src/img/echarts_logo_small.png",
+      "large": "src/img/echarts_logo_large.png"
+    },
+    "links": [
+      {"name": "Project site", "url": "https://github.com/virnet/echarts-panel"}
+    ],
+    "screenshots": [
+      {"name": "Echarts Bar", "path": "src/img/echarts_bar.png"},
+      {"name": "Echarts Line", "path": "src/img/echarts_line.png"},
+      {"name": "Echarts Map", "path": "src/img/echarts_map.png"},
+      {"name": "Echarts pie", "path": "src/img/echarts_pie.png"},
+      {"name": "Echarts Options", "path": "src/img/echarts_options.png"}
+    ],
+    "version": "1.0.1",
+    "updated": "2019-03-22"
+  },
+
+  "dependencies": {
+    "grafanaVersion": "5.4",
+    "plugins": [ ]
+  }
+}
