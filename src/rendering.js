@@ -148,13 +148,13 @@ export default function link(scope, elem, attrs, ctrl) {
                 return {name: i.name, value: i.value[1]}
             });
             if (i !== 0) {
-                labelOptions={
+                labelOptions = {
                     normal: {
                         show: ctrl.panel.label.show,
                         position: 'inner'
                     }
                 }
-            }else{
+            } else {
                 labelOptions = {
                     normal: {
                         show: ctrl.panel.label.show,
@@ -197,7 +197,7 @@ export default function link(scope, elem, attrs, ctrl) {
                 data: itemData
             })
         });
-        option.legend.data = legendData.toJSON();
+        option.legend.data = Array.from(legendData);
         return option;
     }
 
@@ -223,14 +223,14 @@ export default function link(scope, elem, attrs, ctrl) {
         if (ctrl.panel.show.label) {
             labelOption.normal.show = ctrl.panel.label.show
         }
-
+        console.log(data.textColor);
         option = {
             color: data.color,
             legend: {
                 type: 'scroll',
                 show: ctrl.panel.legend.show,
                 textStyle: {
-                    color: '#999'
+                    color: data.textColor
                 }
             },
             tooltip: { // 图例
@@ -246,8 +246,13 @@ export default function link(scope, elem, attrs, ctrl) {
                     type: 'category',
                     axisTick: {show: false},
                     data: data.metrics,
-                    axisLabel: {color: "#999"},
-                    nameTextStyle: {color: "#999"},
+                    axisLabel: {
+                        color: data.textColor,
+                        rotate: ctrl.panel.xlabel.rotate
+                    },
+                    nameTextStyle: {
+                        color: data.textColor,
+                    },
                     axisLine: {lineStyle: {color: "#999"}},
                     splitLine: {lineStyle: {color: "#999"}},
                 }
@@ -255,8 +260,8 @@ export default function link(scope, elem, attrs, ctrl) {
             yAxis: [
                 {
                     type: 'value',
-                    axisLabel: {color: "#999"},
-                    nameTextStyle: {color: "#999"},
+                    axisLabel: {color: data.textColor},
+                    nameTextStyle: {color: data.textColor},
                     axisLine: {lineStyle: {color: "#999"}},
                     splitLine: {lineStyle: {color: "#999"}},
                 }

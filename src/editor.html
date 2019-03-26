@@ -45,5 +45,10 @@
              placeholder="12">
     </div>
     <gf-form-switch class="gf-form" ng-show="ctrl.panel.show.tooltip" label="提示工具" label-class="width-11" checked="ctrl.panel.tooltip.show" on-change="ctrl.refresh()"></gf-form-switch>
+    <div class="gf-form " ng-show="ctrl.panel.isBar||ctrl.panel.isLine">
+      <span class="gf-form-label width-11">旋转x轴</span>
+      <input type="text" class="gf-form-input width-4" ng-model="ctrl.panel.xlabel.rotate" ng-change="ctrl.render()" ng-model-onblur
+             placeholder="0">
+    </div>
   </div>
 </div>

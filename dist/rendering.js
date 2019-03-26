@@ -111,39 +111,7 @@ System.register(["lodash", "jquery", "jquery.flot", "jquery.flot.pie", "./echart
     }
 
     function pieChartsOptions(echartPanel) {
-      var labelOptions = {
-        normal: {
-          show: false,
-          formatter: '{a|{a}}{abg|}\n{hr|}\n  {b|{b}：}{c}  {per|{d}%}  ',
-          backgroundColor: '#eee',
-          borderColor: '#aaa',
-          borderWidth: 1,
-          borderRadius: 4,
-          rich: {
-            a: {
-              color: '#999',
-              lineHeight: 22,
-              align: 'center'
-            },
-            hr: {
-              borderColor: '#aaa',
-              width: '100%',
-              borderWidth: 0.5,
-              height: 0
-            },
-            b: {
-              fontSize: 16,
-              lineHeight: 33
-            },
-            per: {
-              color: '#eee',
-              backgroundColor: '#334455',
-              padding: [2, 4],
-              borderRadius: 2
-            }
-          }
-        }
-      };
+      var labelOptions;
       var option = {
         tooltip: {
           trigger: 'item',
@@ -180,9 +148,6 @@ System.register(["lodash", "jquery", "jquery.flot", "jquery.flot.pie", "./echart
       data.series = data.series.slice(0, 5);
       data.series.map(function (item, i) {
         var radius = [maxRadius * (data.series.length - i - 1) / data.series.length + '%', maxRadius * (data.series.length - i) / data.series.length * 0.9 + '%'];
-
-        var _labelOptions;
-
         var itemData = item.data.map(function (i) {
           legendData.add(i.name);
           return {
@@ -191,13 +156,45 @@ System.register(["lodash", "jquery", "jquery.flot", "jquery.flot.pie", "./echart
           };
         });
 
-        if (i === 0) {
-          _labelOptions = JSON.parse(JSON.stringify(labelOptions));
-          _labelOptions.normal.show = ctrl.panel.label.show;
-        } else {
-          _labelOptions = {
+        if (i !== 0) {
+          labelOptions = {
             normal: {
+              show: ctrl.panel.label.show,
               position: 'inner'
+            }
+          };
+        } else {
+          labelOptions = {
+            normal: {
+              show: ctrl.panel.label.show,
+              formatter: '{a|{a}}{abg|}\n{hr|}\n  {b|{b}：}{c}  {per|{d}%}  ',
+              backgroundColor: '#eee',
+              borderColor: '#aaa',
+              borderWidth: 1,
+              borderRadius: 4,
+              rich: {
+                a: {
+                  color: '#999',
+                  lineHeight: 22,
+                  align: 'center'
+                },
+                hr: {
+                  borderColor: '#aaa',
+                  width: '100%',
+                  borderWidth: 0.5,
+                  height: 0
+                },
+                b: {
+                  fontSize: 16,
+                  lineHeight: 33
+                },
+                per: {
+                  color: '#eee',
+                  backgroundColor: '#334455',
+                  padding: [2, 4],
+                  borderRadius: 2
+                }
+              }
             }
           };
         }
@@ -206,11 +203,11 @@ System.register(["lodash", "jquery", "jquery.flot", "jquery.flot.pie", "./echart
           name: item.name,
           type: 'pie',
           radius: radius,
-          label: _labelOptions,
+          label: labelOptions,
           data: itemData
         });
       });
-      option.legend.data = legendData.toJSON();
+      option.legend.data = Array.from(legendData);
       return option;
     }
 
@@ -237,13 +234,14 @@ System.register(["lodash", "jquery", "jquery.flot", "jquery.flot.pie", "./echart
         labelOption.normal.show = ctrl.panel.label.show;
       }
 
+      console.log(data.textColor);
       option = {
         color: data.color,
         legend: {
           type: 'scroll',
           show: ctrl.panel.legend.show,
           textStyle: {
-            color: '#999'
+            color: data.textColor
           }
         },
         tooltip: {
@@ -262,10 +260,11 @@ System.register(["lodash", "jquery", "jquery.flot", "jquery.flot.pie", "./echart
           },
           data: data.metrics,
           axisLabel: {
-            color: "#999"
+            color: data.textColor,
+            rotate: ctrl.panel.xlabel.rotate
           },
           nameTextStyle: {
-            color: "#999"
+            color: data.textColor
           },
           axisLine: {
             lineStyle: {
@@ -281,10 +280,10 @@ System.register(["lodash", "jquery", "jquery.flot", "jquery.flot.pie", "./echart
         yAxis: [{
           type: 'value',
           axisLabel: {
-            color: "#999"
+            color: data.textColor
           },
           nameTextStyle: {
-            color: "#999"
+            color: data.textColor
           },
           axisLine: {
             lineStyle: {

@@ -71,6 +71,9 @@ System.register(["app/plugins/sdk", "lodash", "app/core/utils/kbn", "app/core/ti
               show: false,
               fontSize: 12
             },
+            xlabel: {
+              rotate: 0
+            },
             stack: false,
             tooltip: {
               show: true
@@ -134,18 +137,26 @@ System.register(["app/plugins/sdk", "lodash", "app/core/utils/kbn", "app/core/ti
               this.panel.show.label = true;
               this.panel.show.legend = true;
               this.panel.show.stack = false;
+              this.panel.isBar = this.panel.isMap = this.panel.isLine = true;
+              this.panel.isPie = true;
             } else if (this.panel.chartsType === 'bar') {
               this.panel.show.label = true;
               this.panel.show.legend = true;
               this.panel.show.stack = true;
+              this.panel.isPie = this.panel.isMap = this.panel.isLine = false;
+              this.panel.isBar = true;
             } else if (this.panel.chartsType === 'line') {
               this.panel.show.label = false;
               this.panel.show.legend = true;
               this.panel.show.stack = true;
+              this.panel.isPie = this.panel.isMap = this.panel.isBar = false;
+              this.panel.isLine = true;
             } else if (this.panel.chartsType === 'map') {
               this.panel.show.label = true;
               this.panel.show.legend = false;
               this.panel.show.stack = false;
+              this.panel.isPie = this.panel.isLine = this.panel.isBar = false;
+              this.panel.isMap = true;
             }
 
             this.render();
@@ -259,7 +270,8 @@ System.register(["app/plugins/sdk", "lodash", "app/core/utils/kbn", "app/core/ti
             var data = {
               "metrics": [],
               "series": [],
-              "color": []
+              "color": [],
+              "textColor": $(".navbar-page-btn").css("color")
             };
             var serieList = [].concat.apply([], series); // 降低数组维度
 
@@ -297,8 +309,8 @@ System.register(["app/plugins/sdk", "lodash", "app/core/utils/kbn", "app/core/ti
                 serieMap[serie.target][metric].push(datapoint[0]);
               });
             });
-            data["targets"] = targets.toJSON().sort();
-            data["metrics"] = metrics.toJSON().sort();
+            data["targets"] = Array.from(targets);
+            data["metrics"] = Array.from(metrics);
             var idx = 0;
 
             for (var name in serieMap) {
@@ -368,8 +380,8 @@ System.register(["app/plugins/sdk", "lodash", "app/core/utils/kbn", "app/core/ti
                 serieMap[metric][serie.target].push(datapoint[0]);
               });
             });
-            data["metrics"] = metrics.toJSON().sort();
-            data["targets"] = targets.toJSON().sort();
+            data["targets"] = Array.from(targets);
+            data["metrics"] = Array.from(metrics);
             var idx = 0;
 
             for (var _metric2 in serieMap) {

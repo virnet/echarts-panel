@@ -23,14 +23,16 @@ export class EChartsCtrl extends MetricsPanelCtrl {
                 values: true,
                 position: 'right',
             },
-            label:{
+            label: {
                 show: false,
-                fontSize:12,
+                fontSize: 12,
             },
-            stack:false,
-            tooltip:{
+            xlabel:{rotate:0},
+            stack: false,
+            tooltip: {
                 show: true,
             },
+
             links: [],
             datasource: null,
             maxDataPoints: 3,
@@ -70,26 +72,36 @@ export class EChartsCtrl extends MetricsPanelCtrl {
         this.panel.format = subItem.value;
         this.render();
     }
-    changeChartsType(){
-        if(this.panel.chartsType==='pie'){
-            this.panel.show.label=true;
-            this.panel.show.legend=true;
-            this.panel.show.stack=false;
-        }else if(this.panel.chartsType==='bar'){
-            this.panel.show.label=true;
-            this.panel.show.legend=true;
-            this.panel.show.stack=true;
-        }else if(this.panel.chartsType==='line'){
-            this.panel.show.label=false;
-            this.panel.show.legend=true;
-            this.panel.show.stack=true;
-        }else if(this.panel.chartsType==='map'){
-            this.panel.show.label=true;
-            this.panel.show.legend=false;
-            this.panel.show.stack=false;
+
+    changeChartsType() {
+        if (this.panel.chartsType === 'pie') {
+            this.panel.show.label = true;
+            this.panel.show.legend = true;
+            this.panel.show.stack = false;
+            this.panel.isBar =this.panel.isMap =this.panel.isLine= true;
+            this.panel.isPie = true;
+        } else if (this.panel.chartsType === 'bar') {
+            this.panel.show.label = true;
+            this.panel.show.legend = true;
+            this.panel.show.stack = true;
+            this.panel.isPie =this.panel.isMap =this.panel.isLine= false;
+            this.panel.isBar = true;
+        } else if (this.panel.chartsType === 'line') {
+            this.panel.show.label = false;
+            this.panel.show.legend = true;
+            this.panel.show.stack = true;
+            this.panel.isPie =this.panel.isMap =this.panel.isBar= false;
+            this.panel.isLine = true;
+        } else if (this.panel.chartsType === 'map') {
+            this.panel.show.label = true;
+            this.panel.show.legend = false;
+            this.panel.show.stack = false;
+            this.panel.isPie =this.panel.isLine =this.panel.isBar= false;
+            this.panel.isMap = true;
         }
         this.render();
     }
+
     onDataError() {  // 数据错误事件触发该函数
         this.series = [];
         this.render();
@@ -111,8 +123,8 @@ export class EChartsCtrl extends MetricsPanelCtrl {
         } else if (this.panel.valueName === "min") {
             return Math.min.apply(null, valueList)
         } else if (this.panel.valueName === "current") {
-            for(let i=valueList.length-1; i>=0;i--){
-                if(valueList[i]!==undefined){
+            for (let i = valueList.length - 1; i >= 0; i--) {
+                if (valueList[i] !== undefined) {
                     return valueList[i];
                 }
             }
@@ -133,9 +145,10 @@ export class EChartsCtrl extends MetricsPanelCtrl {
             return sum;
         }
     }
+
     parseSignalMetricSeries(series) { // 数据格式化
         let serieMap = {};
-        let data = {"metrics": [], "series": [],"color":[]};
+        let data = {"metrics": [], "series": [], "color": []};
         let serieList = [].concat.apply([], series);
         serieList.map((serie, i) => {
             serie.datapoints.map((datapoint, i) => {
@@ -145,45 +158,47 @@ export class EChartsCtrl extends MetricsPanelCtrl {
                 serieMap[serie.target].push(datapoint[1])
             })
         });
-        let idx=0;
+        let idx = 0;
         for (let name in serieMap) {
-            data["data"].push({"name":name,value:this.getValue(serieMap[name][metric])})
+            data["data"].push({"name": name, value: this.getValue(serieMap[name][metric])})
             data.color.push(this.$rootScope.colors[idx++]);
         }
         return data;
     }
+
     parseSeries(series) { // 数据格式化
 
-        if(this.panel.chartsType==='pie'){
+        if (this.panel.chartsType === 'pie') {
             return this.parseMultipleReversalSeries(series)
-        }else if(this.panel.chartsType==='bar' ||this.panel.chartsType==='line' ){
+        } else if (this.panel.chartsType === 'bar' || this.panel.chartsType === 'line') {
             return this.parseMultipleMetricSeries(series)
-        }else if(this.panel.chartsType==='map'){
+        } else if (this.panel.chartsType === 'map') {
             return this.parseMultipleMetricSeries(series);
         }
     }
-    parseMultipleMetricSeries(series){
+
+    parseMultipleMetricSeries(series) {
         var metrics = new Set();
         var targets = new Set();
-        var data = {"metrics": [], "series": [],"color":[]};
+        var data = {"metrics": [], "series": [], "color": [], "textColor":$(".navbar-page-btn").css("color") };
         var serieList = [].concat.apply([], series); // 降低数组维度
         var serieMap = {};
 
         serieList.map((serie, i) => {
-            if(serie.type==='time_series'){
-                data.type="time";
+            if (serie.type === 'time_series') {
+                data.type = "time";
             }
             targets.add(serie.target);
             serie.datapoints.map((datapoint, i) => {
-                if(datapoint[0]===null){
+                if (datapoint[0] === null) {
                     return
                 }
                 let metric;
                 if (this.panel.dateFormat) {
                     metric = moment(datapoint[1]).format(this.panel.dateFormat)
-                } else if(serie.type==='time_series'){
+                } else if (serie.type === 'time_series') {
                     metric = moment(datapoint[1]).format("YYYY-MM-DD HH:mm:ss")
-                }else{
+                } else {
                     metric = datapoint[1]
                 }
                 if (!serieMap[serie.target]) {
@@ -196,43 +211,44 @@ export class EChartsCtrl extends MetricsPanelCtrl {
                 serieMap[serie.target][metric].push(datapoint[0]);
             })
         });
-        data["targets"] = targets.toJSON().sort();
-        data["metrics"] = metrics.toJSON().sort();
-        var idx=0;
+        data["targets"] = Array.from(targets);
+        data["metrics"] = Array.from(metrics);
+        var idx = 0;
         for (var name in serieMap) {
             var _data = {}
             _data["name"] = name
             _data["data"] = []
-            for (let metric in serieMap[name]){
-                _data["data"].push({"name":metric,value:[metric,this.getValue(serieMap[name][metric])]})
+            for (let metric in serieMap[name]) {
+                _data["data"].push({"name": metric, value: [metric, this.getValue(serieMap[name][metric])]})
             }
             data.color.push(this.$rootScope.colors[idx++]);
             data.series.push(_data);
         }
         return data;
     }
-    parseMultipleReversalSeries(series){ //序列反转
+
+    parseMultipleReversalSeries(series) { //序列反转
         var metrics = new Set();
         var targets = new Set();
-        var data = {"metrics": [], "series": [],"color":[]};
+        var data = {"metrics": [], "series": [], "color": []};
         var serieList = [].concat.apply([], series); // 降低数组维度
         var serieMap = {};
 
         serieList.map((serie, i) => {
-            if(serie.type==='time_series'){
-                data.type="time";
+            if (serie.type === 'time_series') {
+                data.type = "time";
             }
             targets.add(serie.target);
             serie.datapoints.map((datapoint, i) => {
-                if(datapoint[0]===null){
+                if (datapoint[0] === null) {
                     return
                 }
                 let metric;
                 if (this.panel.dateFormat) {
                     metric = moment(datapoint[1]).format(this.panel.dateFormat)
-                } else if(serie.type==='time_series'){
+                } else if (serie.type === 'time_series') {
                     metric = moment(datapoint[1]).format("YYYY-MM-DD HH:mm:ss")
-                }else{
+                } else {
                     metric = datapoint[1]
                 }
                 if (!serieMap[metric]) {
@@ -245,15 +261,15 @@ export class EChartsCtrl extends MetricsPanelCtrl {
                 serieMap[metric][serie.target].push(datapoint[0]);
             })
         });
-        data["metrics"] = metrics.toJSON().sort();
-        data["targets"] = targets.toJSON().sort();
-        let idx=0;
+        data["targets"] = Array.from(targets);
+        data["metrics"] = Array.from(metrics);
+        let idx = 0;
         for (let metric in serieMap) {
             let _data = {}
             _data["name"] = metric;
             _data["data"] = []
-            for (let name in serieMap[metric]){
-                _data["data"].push({"name":name,value:[name,this.getValue(serieMap[metric][name])]})
+            for (let name in serieMap[metric]) {
+                _data["data"].push({"name": name, value: [name, this.getValue(serieMap[metric][name])]})
             }
             data.color.push(this.$rootScope.colors[idx++]);
             data.series.push(_data);
@@ -290,7 +306,7 @@ export class EChartsCtrl extends MetricsPanelCtrl {
                 series.push(seriesDataMap[key])
             }
         } else {
-            seriesData.type='time_series'
+            seriesData.type = 'time_series'
             series.push(seriesData)
         }
         //SELECT name as name,item as metric,value FROM monitor.test;
